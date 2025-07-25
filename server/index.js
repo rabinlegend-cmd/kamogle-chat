@@ -3,6 +3,8 @@ import http from 'http';
 import { Server } from 'socket.io';
 
 const app = express();
+// Import SvelteKit handler
+import { handler } from '../.svelte-kit/output/server/app.js';
 // Security headers for production
 app.use((req, res, next) => {
   res.setHeader('Content-Security-Policy', "default-src 'self'; img-src 'self' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';");
@@ -37,6 +39,8 @@ app.use(express.static('public', {
     }
   }
 }));
+// SvelteKit SSR middleware (must be after static and API/socket routes)
+app.use(handler);
 // Set Content-Type for CSS and charset for text files
 app.use((req, res, next) => {
   if (req.url.endsWith('.css')) {
